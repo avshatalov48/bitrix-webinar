@@ -20,12 +20,6 @@ try {
 class UsersListComponent extends \CBitrixComponent
 {
     /**
-     * @access protected
-     * @var int ID инфоблока "Пользователи"
-     */
-    protected $iBlockId = 1;
-
-    /**
      * Метод вызывается при инициализации класса
      *
      * @access public
@@ -55,7 +49,7 @@ class UsersListComponent extends \CBitrixComponent
         try {
             $arUsers = ElementTable::getList(array(
                 "select" => array("ID", "NAME"),
-                "filter" => array("IBLOCK_ID" => $this->iBlockId, "ACTIVE" => "Y"),
+                "filter" => array("IBLOCK_ID" => $this->arParams["IBLOCK_ID"], "ACTIVE" => $this->arParams["ACTIVE"]),
                 "order" => array("ID" => "ASC")
             ))->fetchAll();
         } catch (\Exception $e) {

@@ -10,6 +10,7 @@
     }
   ],
   "require": {
-    "symfony/var-dumper": "3.4.x-dev"
+    "phpdocumentor/phpdocumentor": "v2.9.0",
+    "symfony/var-dumper": "v3.4.14"
   }
 }

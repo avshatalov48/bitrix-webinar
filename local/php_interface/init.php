@@ -1,8 +1,19 @@
 <?php
-
+/**
+ * @const Путь к корневой директории
+ */
 define("ROOT_DIR", $_SERVER["DOCUMENT_ROOT"]);
 
-$fileAutoload = ROOT_DIR . "/vendor/autoload.php";
-if (file_exists($fileAutoload)) {
-    require_once($fileAutoload);
+/**
+ * @var string Путь к включаемому файлу
+ */
+$sPathFileName = ROOT_DIR . "/vendor/autoload.php";
+
+/**
+ * @throws \Exception
+ */
+if (file_exists($sPathFileName)) {
+    require_once($sPathFileName);
+} else {
+    throw new \Exception('Не найден указанный файл');
 }

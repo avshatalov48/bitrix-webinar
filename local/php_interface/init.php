@@ -7,7 +7,7 @@ define("ROOT_DIR", $_SERVER["DOCUMENT_ROOT"]);
 /**
  * @var string Путь к включаемому файлу
  */
-$sPathFileName = ROOT_DIR . "/vendor/autoload.php";
+$sPathFileName = ROOT_DIR . "/local/vendor/autoload.php";
 
 /**
  * @throws \Exception

@@ -1,4 +1,5 @@
 .idea
 /bitrix
 /upload
-/vendor
+/local/vendor/
+/local/composer.phar

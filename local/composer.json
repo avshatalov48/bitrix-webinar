@@ -11,6 +11,8 @@
   ],
   "require": {
     "phpdocumentor/phpdocumentor": "v2.9.0",
-    "symfony/var-dumper": "v3.4.14"
+    "robmorgan/phinx": "0.10.5",
+    "illuminate/validation": "5.4.*",
+    "symfony/var-dumper": "^3.4"
   }
 }

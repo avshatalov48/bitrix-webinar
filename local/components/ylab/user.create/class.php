@@ -62,23 +62,39 @@ class ValidationUserFormComponent extends ComponentValidation
         /**
          * Получение списка значений для свойства "Город"
          */
-        $this->arResult["PROPERTY_LIST"] = PropertyEnumerationTable::getList([
+        $this->arResult["TOWN_LIST"] = PropertyEnumerationTable::getList([
             'filter' => [
                 'PROPERTY_ID' => $this->getPropertyIdByCode($this->arIblock["ID"], "TOWN_LIST"),
             ],
         ])->fetchAll();
 
         /**
+         * Задание значений placeholder для полей
+         */
+        foreach ($this->arResult["PROPERTIES"] as $key => $arProperty) {
+            $sPlaceHolder = "";
+            if ($arProperty["CODE"] == "USER_NAME") {
+                $sPlaceHolder = "Имя";
+            }
+            if ($arProperty["CODE"] == "DATE_BORN") {
+                $sPlaceHolder = "ДД.ММ.ГГГГ";
+            }
+            if ($arProperty["CODE"] == "PHONE") {
+                $sPlaceHolder = "+70000000000";
+            }
+            $this->arResult["PROPERTIES"][$key]["PLACEHOLDER"] = $sPlaceHolder;
+        }
+
+        /**
          * Валидация города
          */
         $this->oValidator->addExtension("town_exists", function ($attribute, $value, $parameters, $validator) {
-            $arValidate = PropertyEnumerationTable::getList([
-                "select" => ["ID"],
-                "filter" => ["=ID" => $value],
-                "limit" => 1
-            ])->fetch();
-
-            return $arValidate["ID"] ? true : false;
+            foreach ($this->arResult["TOWN_LIST"] as $arItem) {
+                if ($arItem["XML_ID"] == $value) {
+                    return true;
+                }
+            }
+            return false;
         });
 
         /**
@@ -108,13 +124,14 @@ class ValidationUserFormComponent extends ComponentValidation
                 $iTownPropertyId = PropertyEnumerationTable::getList([
                     "select" => ["ID"],
                     "filter" => [
-                        "ID" => $arRequest["TOWN_LIST"],
+                        "XML_ID" => $arRequest["TOWN_LIST"],
                     ],
                 ])->fetch()["ID"];
 
+                $sNameField = "{$arRequest["USER_NAME"]}|{$arRequest["DATE_BORN"]}|{$arRequest["PHONE"]}";
                 $arFields = [
                     "IBLOCK_ID" => $this->arIblock["ID"],
-                    "NAME" => "{$arRequest["USER_NAME"]}|{$arRequest["DATE_BORN"]}|{$arRequest["PHONE"]}",
+                    "NAME" => $sNameField,
                     "PROPERTY_VALUES" => [
                         "USER_NAME" => $arRequest["USER_NAME"],
                         "DATE_BORN" => $arRequest["DATE_BORN"],
@@ -124,7 +141,7 @@ class ValidationUserFormComponent extends ComponentValidation
                 ];
 
                 if ($oCIBlockElement->Add($arFields)) {
-                    $this->arResult["SUCCESS"] = true;
+                    $this->arResult["SUCCESS"]["MESSAGE"] = "Успешная валидация. Пользователь добавлен!";
                 }
             } else {
                 $this->arResult["ERRORS"] = ValidatorHelper::errorsToArray($this->oValidator);
@@ -184,10 +201,8 @@ class ValidationUserFormComponent extends ComponentValidation
      */
     public function getPropertyIdByCode($iIblockId, $sPropertyCode)
     {
-        $arProperties = [];
-
         try {
-            $arProperties = PropertyTable::getList([
+            $this->arResult["PROPERTIES"] = PropertyTable::getList([
                 "filter" => [
                     "IBLOCK_ID" => $iIblockId,
                 ],
@@ -196,7 +211,7 @@ class ValidationUserFormComponent extends ComponentValidation
             echo $e->getMessage();
         }
 
-        foreach ($arProperties as $arItem) {
+        foreach ($this->arResult["PROPERTIES"] as $arItem) {
             if ($arItem["CODE"] == $sPropertyCode) {
                 return $arItem["ID"];
             }

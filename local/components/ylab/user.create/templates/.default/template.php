@@ -18,6 +18,7 @@
     <form action="" method="post">
 
         <?= bitrix_sessid_post() ?>
+
         <? if (count($arResult["ERRORS"])): ?>
             <div class="alert alert-danger" role="alert">
                 <?= implode("<hr>", $arResult["ERRORS"]) ?>
@@ -50,9 +51,14 @@
             <label for="townList">Город</label>
             <select class="form-control" id="townList" name="TOWN_LIST">
                 <option value="">Выбрать</option>
-                <option value="1">Москва</option>
-                <option value="2">Санкт-Петербург</option>
-                <option value="3">Казань</option>
+                <? foreach ($arResult["PROPERTY_LIST"] as $arItem): ?>
+                    <option
+                        <? if ($arResult["REQUEST"]["TOWN_LIST"] == $arItem["ID"]): ?>
+                            selected
+                        <? endif; ?>
+                            value="<?= $arItem["ID"] ?>"><?= $arItem["VALUE"] ?>
+                    </option>
+                <? endforeach; ?>
             </select>
         </div>
 

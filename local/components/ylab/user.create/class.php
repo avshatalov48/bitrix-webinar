@@ -11,12 +11,15 @@ use YLab\Validation\ComponentValidation;
 use YLab\Validation\ValidatorHelper;
 
 /**
- * Class ValidationTestComponent
- * Компонент пример использования модуля ylab.validation в разработке
+ * Class ValidationUserFormComponent
+ * Компонент "Добавление пользователя с валидацией"
+ *
+ * @author Alexander Shatalov
+ * @see https://github.com/avshatalov48/bitrix-webinar/
  *
  * @package YLab\Validation\Components
  */
-class ValidationTestComponent extends ComponentValidation
+class ValidationUserFormComponent extends ComponentValidation
 {
     /**
      * @var array $arIblock массив ИБ
@@ -54,6 +57,17 @@ class ValidationTestComponent extends ComponentValidation
      */
     public function executeComponent()
     {
+        $this->arIblock["ID"] = $this->getIblockIdByCode($this->arIblock["CODE"]);
+
+        /**
+         * Получение списка значений для свойства "Город"
+         */
+        $this->arResult["PROPERTY_LIST"] = PropertyEnumerationTable::getList([
+            'filter' => [
+                'PROPERTY_ID' => $this->getPropertyIdByCode($this->arIblock["ID"], "TOWN_LIST"),
+            ],
+        ])->fetchAll();
+
         /**
          * Валидация города
          */
@@ -76,7 +90,7 @@ class ValidationTestComponent extends ComponentValidation
             $arRequest = HttpApplication::getInstance()->getContext()->getRequest();
 
             /**
-             * Подстановка значений $_POST в форму
+             * Подстановка значений $_POST в форму, чтобы не сбрасывались при перезагрузке
              */
             $this->arResult["REQUEST"] = [
                 "USER_NAME" => $arRequest["USER_NAME"],
@@ -91,9 +105,7 @@ class ValidationTestComponent extends ComponentValidation
                  */
                 $oCIBlockElement = new \CIBlockElement;
 
-                $this->arIblock["ID"] = $this->getIblockIdByCode($this->arIblock["CODE"]);
-
-                $iTownPropertyId = \Bitrix\Iblock\PropertyEnumerationTable::getList([
+                $iTownPropertyId = PropertyEnumerationTable::getList([
                     "select" => ["ID"],
                     "filter" => [
                         "ID" => $arRequest["TOWN_LIST"],

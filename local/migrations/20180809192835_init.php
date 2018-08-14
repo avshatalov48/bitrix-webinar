@@ -9,13 +9,31 @@ use \Bitrix\Iblock\IblockTable;
 
 /**
  * Class Init
- * Стартовая миграция - Создание ИБ "Пользователи"
+ * Стартовая миграция - Создание типа ИБ "Служебный" + ИБ "Пользователи" со свойствами
  *
  * @author Alexander Shatalov
  * @see https://github.com/avshatalov48/bitrix-webinar/
  */
 class Init extends AbstractMigration
 {
+    /**
+     * @var array $arTypeIblock массив типа ИБ
+     */
+    public $arTypeIblock = [
+        "ID" => "service",
+        "SECTIONS" => "N",
+        "IN_RSS" => "N",
+        "SORT" => 100,
+        "LANG" => [
+            "ru" => [
+                "NAME" => "Служебный"
+            ],
+            "en" => [
+                "NAME" => "Service"
+            ]
+        ]
+    ];
+
     /**
      * @var array $arIblock массив ИБ
      */
@@ -24,7 +42,6 @@ class Init extends AbstractMigration
         "ID" => 0,
         "CODE" => "users",
         "NAME" => "Пользователи",
-        "IBLOCK_TYPE_ID" => "service",
     ];
 
     /**
@@ -65,7 +82,7 @@ class Init extends AbstractMigration
     ];
 
     /**
-     * Накатываем миграцию - "phinx migrate"
+     * Накатываем миграцию - "vendor\bin\phinx migrate"
      * @throws Exception
      * @access public
      */
@@ -81,6 +98,26 @@ class Init extends AbstractMigration
         }
 
         /**
+         * Проверка существования типа ИБ с необходимым ID
+         */
+
+        $arIblocksType = \CIBlockType::GetList(
+            [],
+            ["ID" => $this->arTypeIblock["ID"]]
+        );
+
+        if (!$arIblocksType->fetch()) {
+            /**
+             * Создание типа ИБ
+             */
+            $obIBlockType = new CIBlockType;
+            if(!$obIBlockType->Add($this->arTypeIblock)){
+                echo $obIBlockType->LAST_ERROR;
+                return;
+            }
+        }
+
+        /**
          * Проверка существования ИБ с необходимым символьным кодом
          */
         try {
@@ -93,22 +130,19 @@ class Init extends AbstractMigration
             echo $e->getMessage();
         }
 
-        if ($arIblocks->fetch()) {
-            echo "Attention! IBlock with CODE={$this->arIblock["CODE"]} exists! Migration stopped!";
-            return;
+        if (!$arIblocks->fetch()) {
+            /**
+             * Создание ИБ
+             */
+            $oIblock = new CIBlock();
+            $this->arIblock["ID"] = $oIblock->Add([
+                "NAME" => $this->arIblock["NAME"],
+                "CODE" => $this->arIblock["CODE"],
+                "ACTIVE" => "Y",
+                "IBLOCK_TYPE_ID" => $this->arTypeIblock["ID"],
+                "SITE_ID" => $this->arIblock["SITE_ID"],
+            ]);
         }
-
-        $oIblock = new CIBlock();
-        /**
-         * Создание ИБ
-         */
-        $this->arIblock["ID"] = $oIblock->Add([
-            "NAME" => $this->arIblock["NAME"],
-            "CODE" => $this->arIblock["CODE"],
-            "ACTIVE" => "Y",
-            "IBLOCK_TYPE_ID" => $this->arIblock["IBLOCK_TYPE_ID"],
-            "SITE_ID" => $this->arIblock["SITE_ID"],
-        ]);
 
         /**
          * Создание свойства "Имя"
@@ -176,7 +210,7 @@ class Init extends AbstractMigration
     }
 
     /**
-     * Откатываем миграцию - "phinx rollback"
+     * Откатываем миграцию - "vendor\bin\phinx rollback"
      * @throws Exception
      * @access public
      */
@@ -207,5 +241,10 @@ class Init extends AbstractMigration
         while ($arItem = $arIblocks->fetch()) {
             CIBlock::Delete($arItem["ID"]);
         }
+
+        /**
+         * Удаление типа ИБ
+         */
+        CIBlockType::Delete($this->arTypeIblock["ID"]);
     }
 }

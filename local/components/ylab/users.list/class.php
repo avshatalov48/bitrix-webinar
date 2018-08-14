@@ -3,12 +3,6 @@
 use \Bitrix\Iblock\ElementTable;
 use \Bitrix\Main\Loader;
 
-try {
-    Loader::includeModule("iblock");
-} catch (\Exception $e) {
-    echo $e->getMessage();
-}
-
 /**
  * Формирование списка активных пользователей
  *
@@ -29,7 +23,8 @@ class UsersListComponent extends \CBitrixComponent
         /** @global \CMain $APPLICATION */
         global $APPLICATION;
 
-        $APPLICATION->RestartBuffer();
+        /** Сброс буфера */
+        // $APPLICATION->RestartBuffer();
 
         /** @var array $arResult */
         $this->arResult = $this->getUsersList();
@@ -46,6 +41,21 @@ class UsersListComponent extends \CBitrixComponent
     protected function getUsersList()
     {
         $arUsers = [];
+
+        /**
+         * Подключение модуля ИБ
+         */
+        try {
+            Loader::includeModule("iblock");
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+
+        $this->arParams["IBLOCK_ID"] = $this->getIblockIdByCode($this->arParams["CODE"]);
+
+        /**
+         * Получение массива активных пользователей
+         */
         try {
             $arUsers = ElementTable::getList(array(
                 "select" => array("ID", "NAME"),
@@ -55,6 +65,27 @@ class UsersListComponent extends \CBitrixComponent
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
+
         return $arUsers;
+    }
+
+    /**
+     * Получение "ID" ИБ по символьному коду
+     * @access public
+     * @param string $sIblockCode Символьный код ИБ
+     * @return integer
+     */
+    public function getIblockIdByCode($sIblockCode)
+    {
+        try {
+            return \Bitrix\Iblock\IblockTable::getList([
+                "filter" => [
+                    "CODE" => $sIblockCode,
+                ],
+            ])->fetch()["ID"];
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+        return false;
     }
 }

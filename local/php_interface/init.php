@@ -1,4 +1,7 @@
 <?php
+
+use \Bitrix\Main\Loader;
+
 /**
  * @const Путь к корневой директории
  */
@@ -10,10 +13,17 @@ define("ROOT_DIR", $_SERVER["DOCUMENT_ROOT"]);
 $sPathFileName = ROOT_DIR . "/local/vendor/autoload.php";
 
 /**
- * @throws \Exception
+ * Проверка существования файла
  */
 if (file_exists($sPathFileName)) {
     require_once($sPathFileName);
-} else {
-    throw new \Exception('Не найден указанный файл');
+}
+
+/**
+ * Подключение модуля "ylab.validation"
+ */
+try {
+    Loader::includeModule("ylab.validation");
+} catch (\Exception $e) {
+    echo $e->getMessage();
 }

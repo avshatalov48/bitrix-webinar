@@ -10,9 +10,8 @@
     }
   ],
   "require": {
-    "phpdocumentor/phpdocumentor": "v2.9.0",
     "robmorgan/phinx": "0.10.5",
-    "illuminate/validation": "5.4.*",
-    "symfony/var-dumper": "^3.4"
+    "illuminate/validation": "v5.5.41",
+    "symfony/var-dumper": "v3.4.14"
   }
 }

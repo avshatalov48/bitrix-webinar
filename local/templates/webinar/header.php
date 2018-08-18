@@ -47,10 +47,17 @@ $templatePath = SITE_TEMPLATE_PATH;
 
         //<CSS>
         Asset::getInstance()->addCss(SITE_TEMPLATE_PATH . "/css/bootstrap.min.css");
+        Asset::getInstance()->addCss(SITE_TEMPLATE_PATH . "/css/jquery-ui.min.css");
+        Asset::getInstance()->addCss(SITE_TEMPLATE_PATH . "/css/jquery-ui.structure.min.css");
+        Asset::getInstance()->addCss(SITE_TEMPLATE_PATH . "/css/jquery-ui.theme.min.css");
 
         //<JS>
         Asset::getInstance()->addJs(SITE_TEMPLATE_PATH . "/js/jquery-3.3.1.min.js");
         Asset::getInstance()->addJs(SITE_TEMPLATE_PATH . "/js/bootstrap.min.js");
+        Asset::getInstance()->addJs(SITE_TEMPLATE_PATH . "/js/jquery-ui.min.js");
+        Asset::getInstance()->addJs(SITE_TEMPLATE_PATH . "/js/datepicker-ru.js");
+        Asset::getInstance()->addJs(SITE_TEMPLATE_PATH . "/js/jquery.mask.min.js");
+        Asset::getInstance()->addJs(SITE_TEMPLATE_PATH . "/js/scripts.js");
         ?>
     </head>
 

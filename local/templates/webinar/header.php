@@ -50,6 +50,7 @@ $templatePath = SITE_TEMPLATE_PATH;
         Asset::getInstance()->addCss(SITE_TEMPLATE_PATH . "/css/jquery-ui.min.css");
         Asset::getInstance()->addCss(SITE_TEMPLATE_PATH . "/css/jquery-ui.structure.min.css");
         Asset::getInstance()->addCss(SITE_TEMPLATE_PATH . "/css/jquery-ui.theme.min.css");
+        Asset::getInstance()->addCss(SITE_TEMPLATE_PATH . "/css/style.css");
 
         //<JS>
         Asset::getInstance()->addJs(SITE_TEMPLATE_PATH . "/js/jquery-3.3.1.min.js");

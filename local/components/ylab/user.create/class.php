@@ -141,7 +141,7 @@ class ValidationUserFormComponent extends ComponentValidation
                 ];
 
                 if ($oCIBlockElement->Add($arFields)) {
-                    $this->arResult["SUCCESS"]["MESSAGE"] = "Успешная валидация. Пользователь добавлен!";
+                    $this->arResult["SUCCESS"] = true;
                 }
             } else {
                 $this->arResult["ERRORS"] = ValidatorHelper::errorsToArray($this->oValidator);

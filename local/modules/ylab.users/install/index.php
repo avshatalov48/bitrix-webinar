@@ -9,12 +9,12 @@ use Bitrix\Main\ModuleManager;
 Loc::loadMessages(__FILE__);
 
 /**
- * Class ylab_webinar
+ * Class ylab_users
  */
-class ylab_webinar extends CModule
+class ylab_users extends CModule
 {
     /**
-     * ylab_webinar constructor.
+     * ylab_users constructor.
      */
     public function __construct()
     {
@@ -27,7 +27,7 @@ class ylab_webinar extends CModule
             $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
         }
 
-        $this->MODULE_ID = 'ylab.webinar';
+        $this->MODULE_ID = 'ylab.users';
         $this->MODULE_NAME = Loc::getMessage('MODULE_NAME');
         $this->MODULE_DESCRIPTION = Loc::getMessage('MODULE_DESCRIPTION');
         $this->MODULE_GROUP_RIGHTS = 'N';

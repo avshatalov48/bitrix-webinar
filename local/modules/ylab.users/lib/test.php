@@ -1,6 +1,6 @@
 <?php
 
-namespace YLab\Webinar;
+namespace YLab\Users;
 
 use Bitrix\Main\Entity\DataManager;
 

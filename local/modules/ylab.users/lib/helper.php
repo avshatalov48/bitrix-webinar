@@ -1,9 +1,9 @@
 <?php
-namespace YLab\Webinar;
+namespace YLab\Users;
 
 /**
  * Class Helper
- * @package YLab\Webinar
+ * @package YLab\Users
  */
 class Helper
 {

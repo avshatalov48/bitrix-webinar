@@ -2,7 +2,7 @@
 
 use \Bitrix\Main\Localization\Loc;
 
-$sModuleId = "ylab.webinar";
+$sModuleId = "ylab.users";
 CModule::IncludeModule($sModuleId);
 
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"] . BX_ROOT . "/modules/main/options.php");
@@ -16,7 +16,7 @@ IncludeModuleLangFile(__FILE__);
 
 if ($USER->IsAdmin()):
     $arAllOptions = [
-        ["ylab_webinar_", Loc::getMessage("YLAB_WEBINAR_"), ["text", 60]]
+        ["ylab_users_", Loc::getMessage("YLAB_USERS_"), ["text", 60]]
     ];
 
     $aTabs = [

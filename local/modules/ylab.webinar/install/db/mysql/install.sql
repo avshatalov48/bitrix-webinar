@@ -1,3 +1,7 @@
+/*
+* install.sql - запросы, которые выполняются при установке модуля
+*/
+
 CREATE TABLE `b_ylab_users` (
   `ID` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `NAME` varchar(255) COLLATE 'utf8_general_ci' NOT NULL,

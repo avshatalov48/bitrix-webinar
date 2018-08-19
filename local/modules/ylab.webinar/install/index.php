@@ -1,4 +1,7 @@
 <?php
+/*
+ * Основной файл отвечающий за инсталляцию/деинсталляцию модуля
+ */
 
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;

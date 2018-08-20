@@ -8,16 +8,17 @@ use \Bitrix\Main\Localization\Loc;
 ?>
 
 <div class="container">
-    <? if ($arResult): ?>
+    <? if (count($arResult)): ?>
+        <h3>users.list.orm</h3>
         <table class="table table-striped">
             <? foreach ($arResult as $iOrder => $arItem): ?>
                 <? //<Шапка таблицы> ?>
                 <? if ($iOrder == 0): ?>
                     <thead>
                     <tr>
-                        <? foreach ($arItem["PROPERTIES"] as $arProperty): ?>
+                        <? foreach ($arItem as $sKey => $sValue): ?>
                             <th>
-                                <?= $arProperty["NAME"] ?>
+                                <?= $sKey ?>
                             </th>
                         <? endforeach; ?>
                     </tr>
@@ -28,9 +29,9 @@ use \Bitrix\Main\Localization\Loc;
 
                 <? //<Тело таблицы> ?>
                 <tr>
-                    <? foreach ($arItem["PROPERTIES"] as $arProperty): ?>
+                    <? foreach ($arItem as $sKey => $sValue): ?>
                         <td>
-                            <?= $arProperty["VALUE"] ?>
+                            <?= $sValue ?>
                         </td>
                     <? endforeach; ?>
                 </tr>

@@ -1,4 +1,5 @@
 <?php
+
 namespace YLab\Users;
 
 /**
@@ -7,11 +8,13 @@ namespace YLab\Users;
  */
 class Helper
 {
-    /**
-     * @return string
+    /*
+     * Вывод удобочитаемой информации в форматированном виде
      */
-    public static function test()
+    public static function parse($expression)
     {
-        return __METHOD__;
+        echo "<pre>";
+        print_r($expression);
+        echo "</pre>";
     }
 }

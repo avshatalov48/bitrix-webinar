@@ -7,11 +7,17 @@ use \Bitrix\Main\HttpApplication;
 use \Bitrix\Iblock\IblockTable;
 use \Bitrix\Iblock\PropertyTable;
 use \Bitrix\Iblock\PropertyEnumerationTable;
+use YLab\Users\TownsTable;
 use YLab\Validation\ComponentValidation;
 use YLab\Validation\ValidatorHelper;
 
+use \YLab\Users\UsersTable;
+use \Bitrix\Main\Localization\Loc;
+use \YLab\Users\Helper;
+
+
 /**
- * Class ValidationUserFormComponent
+ * Class ValidationUserFormOrmComponent
  * Компонент "Добавление пользователя с валидацией"
  *
  * @author Alexander Shatalov
@@ -19,17 +25,8 @@ use YLab\Validation\ValidatorHelper;
  *
  * @package YLab\Validation\Components
  */
-class ValidationUserFormComponent extends ComponentValidation
+class ValidationUserFormOrmComponent extends ComponentValidation
 {
-    /**
-     * @var array $arIblock массив ИБ
-     */
-    public $arIblock = [
-        "SITE_ID" => ["s1"],
-        "CODE" => "users",
-        "IBLOCK_TYPE_ID" => "service",
-    ];
-
     /**
      * ValidationTestComponent constructor.
      * @param \CBitrixComponent|null $component
@@ -41,14 +38,6 @@ class ValidationUserFormComponent extends ComponentValidation
     public function __construct(\CBitrixComponent $component = null, $sFile = __FILE__)
     {
         parent::__construct($component, $sFile);
-        /**
-         * Подключение модуля ИБ
-         */
-        try {
-            Loader::includeModule("iblock");
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-        }
     }
 
     /**
@@ -57,21 +46,26 @@ class ValidationUserFormComponent extends ComponentValidation
      */
     public function executeComponent()
     {
-        $this->arIblock["ID"] = $this->getIblockIdByCode($this->arIblock["CODE"]);
+        // Смысла в проверке подключения модулей большего нет, т.к. всё равно раньше вылетит ошибка с классами
 
-        /**
-         * Получение списка значений для свойства "Город"
-         */
-        $this->arResult["TOWN_LIST"] = PropertyEnumerationTable::getList([
-            'filter' => [
-                'PROPERTY_ID' => $this->getPropertyIdByCode($this->arIblock["ID"], "TOWN_LIST"),
-            ],
-        ])->fetchAll();
+        // Подключение модуля "ylab.users"
+//        self::isIncludeModule('ylab.users');
+        // Подключение модуля "ylab.validation"
+//        self::isIncludeModule('ylab.validation');
+
+        $this->arResult["FIELDS"] = $this->getUsersList();
+        $this->arResult["TOWN_LIST"] = $this->getTownsList();
+        dump($this->arResult);
+
+
+        // Заносим значения placeholder и key fields в Loc
+        exit;
+
 
         /**
          * Задание значений placeholder для полей
          */
-        foreach ($this->arResult["PROPERTIES"] as $key => $arProperty) {
+        foreach ($this->arResult["FIELDS"] as $key => $arProperty) {
             $sPlaceHolder = "";
             if ($arProperty["CODE"] == "USER_NAME") {
                 $sPlaceHolder = "Имя";
@@ -119,35 +113,18 @@ class ValidationUserFormComponent extends ComponentValidation
                 /**
                  * Запись пользователя в ИБ при успешной валидации
                  */
-                $oCIBlockElement = new \CIBlockElement;
 
-                $iTownPropertyId = PropertyEnumerationTable::getList([
-                    "select" => ["ID"],
-                    "filter" => [
-                        "XML_ID" => $arRequest["TOWN_LIST"],
-                    ],
-                ])->fetch()["ID"];
 
-                $sNameField = "{$arRequest["USER_NAME"]}|{$arRequest["DATE_BORN"]}|{$arRequest["PHONE"]}";
-                $arFields = [
-                    "IBLOCK_ID" => $this->arIblock["ID"],
-                    "NAME" => $sNameField,
-                    "PROPERTY_VALUES" => [
-                        "USER_NAME" => $arRequest["USER_NAME"],
-                        "DATE_BORN" => $arRequest["DATE_BORN"],
-                        "PHONE" => $arRequest["PHONE"],
-                        "TOWN_LIST" => $iTownPropertyId,
-                    ],
-                ];
-
-                if ($oCIBlockElement->Add($arFields)) {
-                    $this->arResult["SUCCESS"] = true;
-                }
+//                if ($oCIBlockElement->Add($arFields)) {
+                $this->arResult["SUCCESS"] = true;
+//                }
             } else {
                 $this->arResult["ERRORS"] = ValidatorHelper::errorsToArray($this->oValidator);
             }
         }
 
+        dump($this->arResult);
+        exit;
         $this->includeComponentTemplate();
     }
 
@@ -165,58 +142,69 @@ class ValidationUserFormComponent extends ComponentValidation
             "DATE_BORN" => "required|date_format:d.m.Y",
             "PHONE" => [
                 "required",
-                "regex:/^\+7\d{10}$/", // "regex:/^\+7921\d{7}$/" => (формат +79210000000)
+                "regex:/^\+7\d{10}$/",
             ],
             "TOWN_LIST" => "required|town_exists",
         ];
     }
 
-
     /**
-     * Получение "ID" ИБ по символьному коду
-     * @access public
-     * @param string $sIblockCode Символьный код ИБ
-     * @return integer
+     * Получение списка городов
+     *
+     * @access protected
+     * @return array $arTowns
      */
-    public function getIblockIdByCode($sIblockCode)
+    protected function getTownsList()
     {
+        $arTowns = [];
         try {
-            return IblockTable::getList([
-                "filter" => [
-                    "CODE" => $sIblockCode,
-                ],
-            ])->fetch()["ID"];
+            $arTowns = TownsTable::getList()->fetchAll();
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            Helper::parse($e->getMessage());
         }
-
-        return false;
+        return $arTowns;
     }
 
     /**
-     * Получение "ID" свойства по символьному коду
-     * @param integer $iIblockId ID ИБ
-     * @param string $sPropertyCode Символьный код свойства
-     * @return mixed
+     * Получение данных пользователей
+     *
+     * @access protected
+     * @return array $arUsers
      */
-    public function getPropertyIdByCode($iIblockId, $sPropertyCode)
+    protected function getUsersList()
     {
+        $arUsers = [];
         try {
-            $this->arResult["PROPERTIES"] = PropertyTable::getList([
-                "filter" => [
-                    "IBLOCK_ID" => $iIblockId,
-                ],
+            $arUsers = UsersTable::getList([
+                "select" => [
+                    "ID",
+                    "USER_NAME",
+                    "TOWN.NAME",
+                    "TOWN.REGION",
+                    "DATE_BORN",
+                    "PHONE"
+                ]
             ])->fetchAll();
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            Helper::parse($e->getMessage());
         }
-
-        foreach ($this->arResult["PROPERTIES"] as $arItem) {
-            if ($arItem["CODE"] == $sPropertyCode) {
-                return $arItem["ID"];
-            }
-        }
-
-        return false;
+        return $arUsers;
     }
+
+    /**
+     * Проверка подключения модулей
+     * @param $sNameModule string Название модуля
+     */
+//    public static function isIncludeModule($sNameModule)
+//    {
+//        try {
+//            Loader::includeModule($sNameModule);
+//        } catch (\Exception $e) {
+//            echo "<pre>";
+//            print_r(Loc::getMessage($sNameModule));
+//            print_r($e->getMessage());
+//            echo "</pre>";
+//            exit;
+//        }
+//    }
 }

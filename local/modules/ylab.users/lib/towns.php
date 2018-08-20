@@ -7,6 +7,9 @@ use Bitrix\Main\Entity\DataManager;
 /**
  * Class TownsTable
  * @package YLab\Users
+ *
+ * @author Alexander Shatalov
+ * @see https://github.com/avshatalov48/bitrix-webinar/
  */
 class TownsTable extends DataManager
 {
@@ -37,7 +40,7 @@ class TownsTable extends DataManager
                 "primary" => true,
                 "autocomplete" => true,
             ],
-            "TOWN" => [
+            "NAME" => [
                 "data_type" => "string",
                 "required" => true
             ],

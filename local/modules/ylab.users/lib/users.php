@@ -7,6 +7,9 @@ use Bitrix\Main\Entity;
 /**
  * Class UsersTable
  * @package YLab\Users
+ *
+ * @author Alexander Shatalov
+ * @see https://github.com/avshatalov48/bitrix-webinar/
  */
 class UsersTable extends Entity\DataManager
 {
@@ -28,7 +31,7 @@ class UsersTable extends Entity\DataManager
 
     /**
      * @return array
-     * @throws \Bitrix\Main\SystemException
+     * @throws \Bitrix\Main\ArgumentException
      */
     public static function getMap()
     {

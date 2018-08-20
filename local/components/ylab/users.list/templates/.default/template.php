@@ -8,7 +8,8 @@ use \Bitrix\Main\Localization\Loc;
 ?>
 
 <div class="container">
-    <? if ($arResult): ?>
+    <? if (count($arResult)): ?>
+        <h3>users.list.ib</h3>
         <table class="table table-striped">
             <? foreach ($arResult as $iOrder => $arItem): ?>
                 <? //<Шапка таблицы> ?>

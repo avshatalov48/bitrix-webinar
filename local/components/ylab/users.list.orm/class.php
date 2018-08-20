@@ -1,52 +1,35 @@
 <?php
 
-use \Bitrix\Iblock\ElementTable;
-use \Bitrix\Main\Loader;
-use YLab\Users\UsersTable;
+use \YLab\Users\UsersTable;
 use \Bitrix\Main\Localization\Loc;
+use \YLab\Users\Helper;
 
 /**
- * Формирование списка активных пользователей
+ * Формирование списка пользователей
  *
- * Class UsersListComponent
+ * Class UsersListOrmComponent
  *
  * @author Alexander Shatalov
  * @see https://github.com/avshatalov48/bitrix-webinar/
  */
-class UsersListComponent extends \CBitrixComponent
+class UsersListOrmComponent extends \CBitrixComponent
 {
     /**
      * Метод вызывается при инициализации класса
      *
      * @access public
      */
-
     public function executeComponent()
     {
-        if (Loader::includeModule("ylab.users")) {
-            $this->arResult = UsersTable::getList(array(
-                "select" => array("ID", "USER_NAME", "TOWN", "DATE_BORN", "PHONE")
-            ))->fetchAll();
-        }
-        // Сделать через while fetch обработку значений ключей, либо поискать функцию
-
-        var_dump($this->arResult);
-        exit;
-
-        /** @global \CMain $APPLICATION */
-        global $APPLICATION;
-
-        /** Сброс буфера */
-        // $APPLICATION->RestartBuffer();
-
+        // Подключение модуля "ylab.users"
+//        self::isIncludeModule('ylab.users');
         /** @var array $arResult */
         $this->arResult = $this->getUsersList();
-
         $this->includeComponentTemplate();
     }
 
     /**
-     * Получение массива активных пользователей
+     * Получение данных пользователей
      *
      * @access protected
      * @return array $arUsers
@@ -54,64 +37,37 @@ class UsersListComponent extends \CBitrixComponent
     protected function getUsersList()
     {
         $arUsers = [];
-
-        /**
-         * Подключение модуля ИБ
-         */
         try {
-            Loader::includeModule("iblock");
+            $arUsers = UsersTable::getList([
+                "select" => [
+                    "ID",
+                    Loc::getMessage("FIELD_USER_NAME") => "USER_NAME",
+                    Loc::getMessage("FIELD_TOWN_NAME") => "TOWN.NAME",
+                    Loc::getMessage("FIELD_TOWN_REGION") => "TOWN.REGION",
+                    Loc::getMessage("FIELD_DATE_BORN") => "DATE_BORN",
+                    Loc::getMessage("FIELD_PHONE") => "PHONE"
+                ]
+            ])->fetchAll();
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            Helper::parse($e->getMessage());
         }
-
-        $this->arParams["IBLOCK_ID"] = $this->getIblockIdByCode($this->arParams["CODE"]);
-
-        /**
-         * Получение данных пользователей
-         */
-        $arSelect = [
-            "ID",
-            "IBLOCK_ID",
-            "NAME",
-            "PROPERTY_*"
-        ];
-        $arFilter = [
-            "IBLOCK_ID" => $this->arParams["IBLOCK_ID"],
-            "ACTIVE" => $this->arParams["ACTIVE"]
-        ];
-        $arSort = [
-            "SORT" => "ASC"
-        ];
-        $res = CIBlockElement::GetList($arSort, $arFilter, false, false, $arSelect);
-
-        $iOrder = 0;
-        while ($ob = $res->GetNextElement()) {
-            $arFields = $ob->GetFields();
-            $arUsers[$iOrder] = $arFields;
-            $arProperties = $ob->GetProperties();
-            $arUsers[$iOrder++]["PROPERTIES"] = $arProperties;
-        }
-
         return $arUsers;
     }
 
     /**
-     * Получение "ID" ИБ по символьному коду
-     * @access public
-     * @param string $sIblockCode Символьный код ИБ
-     * @return integer
+     * Проверка подключения модулей
+     * @param $sNameModule string Название модуля
      */
-    public function getIblockIdByCode($sIblockCode)
-    {
-        try {
-            return \Bitrix\Iblock\IblockTable::getList([
-                "filter" => [
-                    "CODE" => $sIblockCode,
-                ],
-            ])->fetch()["ID"];
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-        }
-        return false;
-    }
+//    public static function isIncludeModule($sNameModule)
+//    {
+//        try {
+//            Loader::includeModule($sNameModule);
+//        } catch (\Exception $e) {
+//            echo "<pre>";
+//            print_r(Loc::getMessage($sNameModule));
+//            print_r($e->getMessage());
+//            echo "</pre>";
+//            exit;
+//        }
+//    }
 }

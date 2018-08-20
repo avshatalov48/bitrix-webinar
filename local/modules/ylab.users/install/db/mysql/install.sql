@@ -4,18 +4,18 @@
 
 CREATE TABLE `b_ylab_towns` (
   `ID` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `TOWN` varchar(255) COLLATE 'utf8_general_ci' NOT NULL,
+  `NAME` varchar(255) COLLATE 'utf8_general_ci' NOT NULL,
   `REGION` int(11) NOT NULL
 );
 
 /*
 * Список городов с регионами
 */
-INSERT INTO `b_ylab_towns` (`ID`, `TOWN`, `REGION`) VALUES (NULL, 'Москва', 77);
-INSERT INTO `b_ylab_towns` (`ID`, `TOWN`, `REGION`) VALUES (NULL, 'Санкт-Петербург', 78);
-INSERT INTO `b_ylab_towns` (`ID`, `TOWN`, `REGION`) VALUES (NULL, 'Тольятти', 63);
-INSERT INTO `b_ylab_towns` (`ID`, `TOWN`, `REGION`) VALUES (NULL, 'Липецк', 48);
-INSERT INTO `b_ylab_towns` (`ID`, `TOWN`, `REGION`) VALUES (NULL, 'Казань', 16);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `REGION`) VALUES (NULL, 'Москва', 77);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `REGION`) VALUES (NULL, 'Санкт-Петербург', 78);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `REGION`) VALUES (NULL, 'Тольятти', 63);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `REGION`) VALUES (NULL, 'Липецк', 48);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `REGION`) VALUES (NULL, 'Казань', 16);
 
 CREATE TABLE `b_ylab_users` (
   `ID` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,

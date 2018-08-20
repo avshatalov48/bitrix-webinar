@@ -8,7 +8,8 @@ use \Bitrix\Main\Localization\Loc;
 ?>
 
 <div class="container">
-    <? if ($arResult["PROPERTIES"]): ?>
+    <? if (count($arResult["PROPERTIES"])): ?>
+        <h3>users.create.orm</h3>
         <form action="" method="post">
 
             <?= bitrix_sessid_post() ?>

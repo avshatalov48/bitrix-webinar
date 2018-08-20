@@ -5,10 +5,12 @@
 use \Bitrix\Main\Localization\Loc;
 
 /** @var array $arResult */
+dump($arResult);
 ?>
 
 <div class="container">
-    <? if ($arResult["PROPERTIES"]): ?>
+    <? if (count($arResult["PROPERTIES"])): ?>
+        <h3>users.create.ib</h3>
         <form action="" method="post">
 
             <?= bitrix_sessid_post() ?>

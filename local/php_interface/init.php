@@ -27,3 +27,12 @@ try {
 } catch (\Exception $e) {
     echo $e->getMessage();
 }
+
+/**
+ * Подключение модуля "ylab.users"
+ */
+try {
+    Loader::includeModule("ylab.users");
+} catch (\Exception $e) {
+    echo $e->getMessage();
+}

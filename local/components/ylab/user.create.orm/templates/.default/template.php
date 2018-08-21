@@ -2,13 +2,13 @@
     die();
 }
 
-use \Bitrix\Main\Localization\Loc;
+use \YLab\Users\Helper;
 
 /** @var array $arResult */
 ?>
 
 <div class="container">
-    <? if (count($arResult["PROPERTIES"])): ?>
+    <? if (count($arResult["FIELDS"])): ?>
         <h3>users.create.orm</h3>
         <form action="" method="post">
 
@@ -21,53 +21,52 @@ use \Bitrix\Main\Localization\Loc;
                 </div>
             <? elseif ($arResult["SUCCESS"]): ?>
                 <div class="alert alert-success" role="alert">
-                    <?= Loc::getMessage("SUCCESS") ?>
+                    <?= Helper::i18n("SUCCESS") ?>
                 </div>
             <? endif; ?>
             <? //</Сообщения о статусе валидации> ?>
 
-            <? foreach ($arResult["PROPERTIES"] as $arProperty): ?>
+            <? //<Поля> ?>
+            <? foreach ($arResult["FIELDS"] as $sKey => $sValue): ?>
                 <div class="form-group">
-                    <label for="<?= $arProperty["CODE"] ?>"><?= $arProperty["NAME"] ?></label>
-                    <? //<Строка> ?>
-                    <? if ($arProperty["PROPERTY_TYPE"] == "S"): ?>
-                        <input type="text" name="<?= $arProperty["CODE"] ?>"
-                               class="form-control" id="<?= $arProperty["CODE"] ?>"
-                               placeholder="<?= $arProperty["PLACEHOLDER"] ?>"
-                               value="<?= $arResult["REQUEST"][$arProperty["CODE"]] ?>">
-                    <? endif; ?>
-                    <? //</Строка> ?>
-                    <? //<Список> ?>
-                    <? if ($arProperty["PROPERTY_TYPE"] == "L"): ?>
-                        <select class="form-control" id="<?= $arProperty["CODE"] ?>"
-                                name="<?= $arProperty["CODE"] ?>">
-                            <option value="">
-                                <?= Loc::getMessage("SELECT_DEFAULT") ?>
-                            </option>
-                            <? foreach ($arResult["TOWN_LIST"] as $arItem): ?>
-                                <option
-                                    <? if ($arResult["REQUEST"]["TOWN_LIST"] == $arItem["XML_ID"]): ?>
-                                        selected
-                                    <? endif; ?>
-                                        value="<?= $arItem["XML_ID"] ?>"><?= $arItem["VALUE"] ?>
-                                </option>
-                            <? endforeach; ?>
-                        </select>
-                    <? endif; ?>
-                    <? //</Список> ?>
+                    <label for="<?= $sKey ?>"><?= Helper::i18n($sKey) ?></label>
+                    <input type="text" name="<?= $sKey ?>"
+                           class="form-control" id="<?= $sKey ?>"
+                           placeholder="<?= $arResult["PLACEHOLDERS"][$sKey] ?>"
+                           value="<?= $arResult["REQUEST"][$sKey] ?>">
                 </div>
             <? endforeach; ?>
+            <? //</Поля> ?>
+
+            <? //<Список городов> ?>
+            <div class="form-group">
+                <label for="TOWN_LIST"><?= Helper::i18n("PLACEHOLDERS_TOWN_LIST") ?></label>
+                <select class="form-control" id="TOWN_LIST" name="TOWN_LIST">
+                    <option value="">
+                        <?= Helper::i18n("SELECT_DEFAULT") ?>
+                    </option>
+                    <? foreach ($arResult["TOWN_LIST"] as $arItem): ?>
+                        <option
+                            <? if ($arResult["REQUEST"]["TOWN_LIST"] == $arItem["ID"]): ?>
+                                selected
+                            <? endif; ?>
+                                value="<?= $arItem["ID"] ?>"><?= $arItem["NAME"] ?>
+                        </option>
+                    <? endforeach; ?>
+                </select>
+            </div>
+            <? //</Список городов> ?>
 
             <button type="submit" name="submit" class="btn btn-primary">
-                <?= Loc::getMessage("BUTTON_SUBMIT") ?>
+                <?= Helper::i18n("BUTTON_SUBMIT") ?>
             </button>
             <button type="reset" class="btn btn-secondary">
-                <?= Loc::getMessage("BUTTON_RESET") ?>
+                <?= Helper::i18n("BUTTON_RESET") ?>
             </button>
         </form>
     <? else: ?>
         <div class="alert alert-danger" role="alert">
-            <?= Loc::getMessage("ERROR_IB_NOT_EXIST") ?>
+            <?= Helper::i18n("ERROR_DB_NOT_EXIST") ?>
         </div>
     <? endif; ?>
 </div>

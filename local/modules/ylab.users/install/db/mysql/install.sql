@@ -2,21 +2,45 @@
 * install.sql - запросы, которые выполняются при установке модуля
 */
 
-CREATE TABLE `b_ylab_towns` (
+/*
+* Страны
+*/
+CREATE TABLE `b_ylab_countries` (
   `ID` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `NAME` varchar(255) COLLATE 'utf8_general_ci' NOT NULL,
-  `REGION` int(11) NOT NULL
+  `NAME` varchar(255) COLLATE 'utf8_general_ci' NOT NULL
 );
 
 /*
-* Список городов с регионами
+* Данные стран для тестов
 */
-INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `REGION`) VALUES (NULL, 'Москва', 77);
-INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `REGION`) VALUES (NULL, 'Санкт-Петербург', 78);
-INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `REGION`) VALUES (NULL, 'Тольятти', 63);
-INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `REGION`) VALUES (NULL, 'Липецк', 48);
-INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `REGION`) VALUES (NULL, 'Казань', 16);
+INSERT INTO `b_ylab_countries` (`ID`, `NAME`) VALUES (NULL, 'Россия');
+INSERT INTO `b_ylab_countries` (`ID`, `NAME`) VALUES (NULL, 'Германия');
+INSERT INTO `b_ylab_countries` (`ID`, `NAME`) VALUES (NULL, 'Франция');
 
+/*
+* Города
+*/
+CREATE TABLE `b_ylab_towns` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `NAME` varchar(255) COLLATE 'utf8_general_ci' NOT NULL,
+  `COUNTRY_ID` int(11) NOT NULL,
+  FOREIGN KEY (`COUNTRY_ID`) REFERENCES `b_ylab_countries` (`ID`)
+);
+
+/*
+* Данные городов для тестов
+*/
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `COUNTRY_ID`) VALUES (NULL, 'Москва', 1);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `COUNTRY_ID`) VALUES (NULL, 'Санкт-Петербург', 1);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `COUNTRY_ID`) VALUES (NULL, 'Тольятти', 1);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `COUNTRY_ID`) VALUES (NULL, 'Липецк', 1);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `COUNTRY_ID`) VALUES (NULL, 'Казань', 1);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `COUNTRY_ID`) VALUES (NULL, 'Берлин', 2);
+INSERT INTO `b_ylab_towns` (`ID`, `NAME`, `COUNTRY_ID`) VALUES (NULL, 'Париж', 3);
+
+/*
+* Пользователи
+*/
 CREATE TABLE `b_ylab_users` (
   `ID` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `USER_NAME` varchar(255) COLLATE 'utf8_general_ci' NOT NULL,
@@ -34,3 +58,5 @@ INSERT INTO `b_ylab_users` (`ID`, `USER_NAME`, `TOWN_ID`, `DATE_BORN`, `PHONE`) 
 INSERT INTO `b_ylab_users` (`ID`, `USER_NAME`, `TOWN_ID`, `DATE_BORN`, `PHONE`) VALUES (NULL, 'Коля', '3', '1983-03-03', '+79000000003');
 INSERT INTO `b_ylab_users` (`ID`, `USER_NAME`, `TOWN_ID`, `DATE_BORN`, `PHONE`) VALUES (NULL, 'Ваня', '4', '1984-04-04', '+79000000004');
 INSERT INTO `b_ylab_users` (`ID`, `USER_NAME`, `TOWN_ID`, `DATE_BORN`, `PHONE`) VALUES (NULL, 'Кирюша', '5', '1985-05-05', '+79000000005');
+INSERT INTO `b_ylab_users` (`ID`, `USER_NAME`, `TOWN_ID`, `DATE_BORN`, `PHONE`) VALUES (NULL, 'Филипп', '6', '1986-06-06', '+79000000006');
+INSERT INTO `b_ylab_users` (`ID`, `USER_NAME`, `TOWN_ID`, `DATE_BORN`, `PHONE`) VALUES (NULL, 'Пьер', '7', '1987-07-07', '+79000000007');

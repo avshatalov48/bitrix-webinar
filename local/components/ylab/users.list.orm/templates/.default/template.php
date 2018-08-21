@@ -2,8 +2,7 @@
     die();
 }
 
-use \Bitrix\Main\Localization\Loc;
-
+use \YLab\Users\Helper;
 /** @var array $arResult */
 ?>
 
@@ -18,7 +17,7 @@ use \Bitrix\Main\Localization\Loc;
                     <tr>
                         <? foreach ($arItem as $sKey => $sValue): ?>
                             <th>
-                                <?= $sKey ?>
+                                <?= Helper::i18n($sKey) ?>
                             </th>
                         <? endforeach; ?>
                     </tr>
@@ -41,7 +40,7 @@ use \Bitrix\Main\Localization\Loc;
         </table>
     <? else: ?>
         <div class="alert alert-danger" role="alert">
-            <?= Loc::getMessage("ERROR_USER_LIST_IS_EMPTY") ?>
+            <?= Helper::i18n("ERROR_USER_LIST_IS_EMPTY") ?>
         </div>
     <? endif; ?>
 </div>

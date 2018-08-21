@@ -1,7 +1,8 @@
 <?php
 
-use \YLab\Users\UsersTable;
+use \Bitrix\Main\Loader;
 use \Bitrix\Main\Localization\Loc;
+use \YLab\Users\UsersTable;
 use \YLab\Users\Helper;
 
 /**
@@ -15,14 +16,25 @@ use \YLab\Users\Helper;
 class UsersListOrmComponent extends \CBitrixComponent
 {
     /**
+     * @param $arParams
+     * @return array
+     * @throws \Bitrix\Main\LoaderException
+     */
+    public function onPrepareComponentParams($arParams)
+    {
+        if (!Loader::includeModule("ylab.users")) {
+            echo "<pre>" . Loc::getMessage("YLAB_USERS_MODULE_EXISTS") . "</pre>";
+        }
+        return parent::onPrepareComponentParams($arParams);
+    }
+
+    /**
      * Метод вызывается при инициализации класса
      *
      * @access public
      */
     public function executeComponent()
     {
-        // Подключение модуля "ylab.users"
-//        self::isIncludeModule('ylab.users');
         /** @var array $arResult */
         $this->arResult = $this->getUsersList();
         $this->includeComponentTemplate();
@@ -41,33 +53,17 @@ class UsersListOrmComponent extends \CBitrixComponent
             $arUsers = UsersTable::getList([
                 "select" => [
                     "ID",
-                    Loc::getMessage("FIELD_USER_NAME") => "USER_NAME",
-                    Loc::getMessage("FIELD_TOWN_NAME") => "TOWN.NAME",
-                    Loc::getMessage("FIELD_TOWN_REGION") => "TOWN.REGION",
-                    Loc::getMessage("FIELD_DATE_BORN") => "DATE_BORN",
-                    Loc::getMessage("FIELD_PHONE") => "PHONE"
-                ]
+                    "USER_NAME",
+                    "TOWN.NAME",
+                    "TOWN.COUNTRY.NAME",
+                    "DATE_BORN",
+                    "PHONE"
+                ],
+                "order" => ["ID" => "ASC"]
             ])->fetchAll();
         } catch (\Exception $e) {
             Helper::parse($e->getMessage());
         }
         return $arUsers;
     }
-
-    /**
-     * Проверка подключения модулей
-     * @param $sNameModule string Название модуля
-     */
-//    public static function isIncludeModule($sNameModule)
-//    {
-//        try {
-//            Loader::includeModule($sNameModule);
-//        } catch (\Exception $e) {
-//            echo "<pre>";
-//            print_r(Loc::getMessage($sNameModule));
-//            print_r($e->getMessage());
-//            echo "</pre>";
-//            exit;
-//        }
-//    }
 }

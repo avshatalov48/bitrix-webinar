@@ -6,7 +6,7 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 $APPLICATION->SetTitle("1С-Битрикс обучение");
 ?>
 
-<? $APPLICATION->IncludeComponent("ylab:user.create", "", []); ?>
+<?// $APPLICATION->IncludeComponent("ylab:user.create", "", []); ?>
 
 <? $APPLICATION->IncludeComponent("ylab:user.create.orm", "", []); ?>
 

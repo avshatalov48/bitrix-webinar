@@ -7,6 +7,7 @@ use \Bitrix\Main\HttpApplication;
 use \Bitrix\Iblock\IblockTable;
 use \Bitrix\Iblock\PropertyTable;
 use \Bitrix\Iblock\PropertyEnumerationTable;
+use YLab\Users\CountriesTable;
 use YLab\Users\TownsTable;
 use YLab\Validation\ComponentValidation;
 use YLab\Validation\ValidatorHelper;
@@ -15,6 +16,7 @@ use \YLab\Users\UsersTable;
 use \Bitrix\Main\Localization\Loc;
 use \YLab\Users\Helper;
 
+use Bitrix\Main\Type\Date;
 
 /**
  * Class ValidationUserFormOrmComponent
@@ -27,6 +29,22 @@ use \YLab\Users\Helper;
  */
 class ValidationUserFormOrmComponent extends ComponentValidation
 {
+    /**
+     * @param $arParams
+     * @return array
+     * @throws \Bitrix\Main\LoaderException
+     */
+    public function onPrepareComponentParams($arParams)
+    {
+        if (!Loader::includeModule("ylab.users")) {
+            echo "<pre>" . Loc::getMessage("YLAB_USERS_MODULE_EXISTS") . "</pre>";
+        }
+        if (!Loader::includeModule("ylab.validation")) {
+            echo "<pre>" . Loc::getMessage("YLAB_VALIDATION_MODULE_EXISTS") . "</pre>";
+        }
+        return parent::onPrepareComponentParams($arParams);
+    }
+
     /**
      * ValidationTestComponent constructor.
      * @param \CBitrixComponent|null $component
@@ -46,37 +64,14 @@ class ValidationUserFormOrmComponent extends ComponentValidation
      */
     public function executeComponent()
     {
-        // Смысла в проверке подключения модулей большего нет, т.к. всё равно раньше вылетит ошибка с классами
-
-        // Подключение модуля "ylab.users"
-//        self::isIncludeModule('ylab.users');
-        // Подключение модуля "ylab.validation"
-//        self::isIncludeModule('ylab.validation');
-
-        $this->arResult["FIELDS"] = $this->getUsersList();
+        $this->arResult["FIELDS"] = $this->getUsersFields();
         $this->arResult["TOWN_LIST"] = $this->getTownsList();
-        dump($this->arResult);
-
-
-        // Заносим значения placeholder и key fields в Loc
-        exit;
-
 
         /**
          * Задание значений placeholder для полей
          */
-        foreach ($this->arResult["FIELDS"] as $key => $arProperty) {
-            $sPlaceHolder = "";
-            if ($arProperty["CODE"] == "USER_NAME") {
-                $sPlaceHolder = "Имя";
-            }
-            if ($arProperty["CODE"] == "DATE_BORN") {
-                $sPlaceHolder = "ДД.ММ.ГГГГ";
-            }
-            if ($arProperty["CODE"] == "PHONE") {
-                $sPlaceHolder = "+70000000000";
-            }
-            $this->arResult["PROPERTIES"][$key]["PLACEHOLDER"] = $sPlaceHolder;
+        foreach ($this->arResult["FIELDS"] as $sKey => $sValue) {
+            $this->arResult["PLACEHOLDERS"][$sKey] = Helper::i18n("PLACEHOLDERS_" . $sKey);
         }
 
         /**
@@ -84,7 +79,7 @@ class ValidationUserFormOrmComponent extends ComponentValidation
          */
         $this->oValidator->addExtension("town_exists", function ($attribute, $value, $parameters, $validator) {
             foreach ($this->arResult["TOWN_LIST"] as $arItem) {
-                if ($arItem["XML_ID"] == $value) {
+                if ($arItem["ID"] == $value) {
                     return true;
                 }
             }
@@ -111,20 +106,16 @@ class ValidationUserFormOrmComponent extends ComponentValidation
 
             if ($this->oValidator->passes()) {
                 /**
-                 * Запись пользователя в ИБ при успешной валидации
+                 * Запись пользователя в БД при успешной валидации
                  */
-
-
-//                if ($oCIBlockElement->Add($arFields)) {
-                $this->arResult["SUCCESS"] = true;
-//                }
+                if ($this->saveUser()) {
+                    $this->arResult["SUCCESS"] = true;
+                }
             } else {
                 $this->arResult["ERRORS"] = ValidatorHelper::errorsToArray($this->oValidator);
             }
         }
 
-        dump($this->arResult);
-        exit;
         $this->includeComponentTemplate();
     }
 
@@ -158,7 +149,9 @@ class ValidationUserFormOrmComponent extends ComponentValidation
     {
         $arTowns = [];
         try {
-            $arTowns = TownsTable::getList()->fetchAll();
+            $arTowns = TownsTable::getList([
+                "order" => ["NAME" => "ASC"]
+            ])->fetchAll();
         } catch (\Exception $e) {
             Helper::parse($e->getMessage());
         }
@@ -171,40 +164,44 @@ class ValidationUserFormOrmComponent extends ComponentValidation
      * @access protected
      * @return array $arUsers
      */
-    protected function getUsersList()
+    protected function getUsersFields()
     {
         $arUsers = [];
         try {
             $arUsers = UsersTable::getList([
                 "select" => [
-                    "ID",
                     "USER_NAME",
-                    "TOWN.NAME",
-                    "TOWN.REGION",
                     "DATE_BORN",
                     "PHONE"
-                ]
+                ],
+                "limit" => 1
             ])->fetchAll();
         } catch (\Exception $e) {
             Helper::parse($e->getMessage());
         }
-        return $arUsers;
+        return $arUsers[0];
     }
 
     /**
-     * Проверка подключения модулей
-     * @param $sNameModule string Название модуля
+     * @return bool
+     * @throws \Bitrix\Main\ObjectException
      */
-//    public static function isIncludeModule($sNameModule)
-//    {
-//        try {
-//            Loader::includeModule($sNameModule);
-//        } catch (\Exception $e) {
-//            echo "<pre>";
-//            print_r(Loc::getMessage($sNameModule));
-//            print_r($e->getMessage());
-//            echo "</pre>";
-//            exit;
-//        }
-//    }
+    protected function saveUser()
+    {
+        $oRes = false;
+        $oDate = new Date($this->arResult["REQUEST"]["DATE_BORN"]);
+
+        try {
+            $oRes = UsersTable::add([
+                'USER_NAME' => $this->arResult["REQUEST"]["USER_NAME"],
+                'DATE_BORN' => $oDate,
+                'PHONE' => $this->arResult["REQUEST"]["PHONE"],
+                'TOWN_ID' => $this->arResult["REQUEST"]["TOWN_LIST"],
+            ])->isSuccess();
+        } catch (\Exception $e) {
+            Helper::parse($e->getMessage());
+        }
+
+        return $oRes;
+    }
 }

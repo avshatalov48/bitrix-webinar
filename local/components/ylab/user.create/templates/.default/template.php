@@ -5,7 +5,6 @@
 use \Bitrix\Main\Localization\Loc;
 
 /** @var array $arResult */
-dump($arResult);
 ?>
 
 <div class="container">

@@ -104,6 +104,7 @@ class ValidationUserFormOrmComponent extends ComponentValidation
                  */
                 if ($this->saveUser()) {
                     $this->arResult["SUCCESS"] = true;
+                    $this->arResult["REQUEST"] = [];
                 }
             } else {
                 $this->arResult["ERRORS"] = ValidatorHelper::errorsToArray($this->oValidator);

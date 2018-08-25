@@ -5,6 +5,7 @@
 
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
+use Bitrix\Main\IO\Directory;
 
 Loc::loadMessages(__FILE__);
 
@@ -13,11 +14,19 @@ Loc::loadMessages(__FILE__);
  */
 class ylab_users extends CModule
 {
+    public $pathInstallComponents;
+    public $pathBitrixComponents;
+    public $pathVendor;
+
     /**
      * ylab_users constructor.
      */
     public function __construct()
     {
+        $this->pathInstallComponents = __DIR__ . "/components/";
+        $this->pathBitrixComponents = $_SERVER["DOCUMENT_ROOT"] . "/bitrix/components/";
+        $this->pathVendor = "ylab/";
+
         $arModuleVersion = [];
 
         include __DIR__ . '/version.php';
@@ -39,6 +48,7 @@ class ylab_users extends CModule
     public function doInstall()
     {
         $this->InstallDB();
+        $this->InstallFiles();
         ModuleManager::registerModule($this->MODULE_ID);
     }
 
@@ -48,6 +58,7 @@ class ylab_users extends CModule
     public function doUninstall()
     {
         $this->UnInstallDB();
+        $this->UnInstallFiles();
         ModuleManager::unRegisterModule($this->MODULE_ID);
     }
 
@@ -79,5 +90,44 @@ class ylab_users extends CModule
         if (is_array($oResult)) {
             $APPLICATION->ThrowException(implode("", $oResult));
         }
+    }
+
+    /**
+     * Инсталяция файлов модуля
+     */
+    public function InstallFiles()
+    {
+        if (Directory::isDirectoryExists($this->pathInstallComponents)) {
+            CopyDirFiles(
+                $this->pathInstallComponents,
+                $this->pathBitrixComponents,
+                true,
+                true
+            );
+        }
+        return true;
+    }
+
+    /**
+     * Деинсталяция каталогов только необходимого модуля, остальные не трогаем
+     */
+    public function UnInstallFiles()
+    {
+        if (Directory::isDirectoryExists($this->pathInstallComponents)) {
+            $arComponents = scandir($this->pathInstallComponents . $this->pathVendor);
+            foreach ($arComponents as $component) {
+                if ($component == "." || $component == "..") {
+                    continue;
+                }
+                $sDeletePath = $this->pathBitrixComponents . $this->pathVendor . $component . "/";
+                Directory::deleteDirectory($sDeletePath);
+            }
+            // Удаление папки вендора, если она пустая
+            $sDeletePath = $this->pathBitrixComponents . $this->pathVendor;
+            if ([] === (array_diff(scandir($sDeletePath), array(".", "..")))) {
+                Directory::deleteDirectory($sDeletePath);
+            }
+        }
+        return true;
     }
 }

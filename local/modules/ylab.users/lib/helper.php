@@ -27,7 +27,7 @@ class Helper
      * Меньше дублирования.
      *
      * @param $sCode string Код
-     * @return string
+     * @return string Сообщение
      */
     public static function i18n($sCode)
     {

@@ -3,7 +3,7 @@
  * @global \CMain $APPLICATION
  */
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
-$APPLICATION->SetTitle("1С-Битрикс обучение");
+$APPLICATION->SetTitle("Ylab: 1С-Битрикс обучение");
 ?>
 
 <?// $APPLICATION->IncludeComponent("ylab:user.create", "", []); ?>

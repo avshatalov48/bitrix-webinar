@@ -5,13 +5,13 @@ namespace YLab\Users;
 use Bitrix\Main\Entity;
 
 /**
- * Class UsersTable
+ * Class YlabTownsTable
  * @package YLab\Users
  *
  * @author Alexander Shatalov
  * @see https://github.com/avshatalov48/bitrix-webinar/
  */
-class UsersTable extends Entity\DataManager
+class YlabTownsTable extends Entity\DataManager
 {
     /**
      * @return string
@@ -26,7 +26,7 @@ class UsersTable extends Entity\DataManager
      */
     public static function getTableName()
     {
-        return "b_ylab_users";
+        return "b_ylab_towns";
     }
 
     /**
@@ -41,27 +41,19 @@ class UsersTable extends Entity\DataManager
                 "primary" => true,
                 "autocomplete" => true,
             ],
-            "USER_NAME" => [
+            "NAME" => [
                 "data_type" => "string",
                 "required" => true
             ],
-            "TOWN_ID" => [
+            "COUNTRY_ID" => [
                 "data_type" => "integer",
                 "required" => true
             ],
             new Entity\ReferenceField(
-                "TOWN",
-                "YLab\Users\Towns",
-                ["=this.TOWN_ID" => "ref.ID"]
+                "COUNTRY",
+                "YLab\Users\YlabCountries",
+                ["=this.COUNTRY_ID" => "ref.ID"]
             ),
-            "DATE_BORN" => [
-                "data_type" => "date",
-                "required" => true
-            ],
-            "PHONE" => [
-                "data_type" => "string",
-                "required" => true
-            ],
         ];
     }
 }

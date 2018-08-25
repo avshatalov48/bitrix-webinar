@@ -25,7 +25,7 @@ if (file_exists($sPathFileName)) {
 try {
     Loader::includeModule("ylab.validation");
 } catch (\Exception $e) {
-    echo $e->getMessage();
+    print_r($e->getMessage());
 }
 
 /**
@@ -34,5 +34,5 @@ try {
 try {
     Loader::includeModule("ylab.users");
 } catch (\Exception $e) {
-    echo $e->getMessage();
+    print_r($e->getMessage());
 }

@@ -2,13 +2,13 @@
 
 use \Bitrix\Main\Loader;
 use \Bitrix\Main\Localization\Loc;
-use \YLab\Users\UsersTable;
+
+use \YLab\Users\YlabUsersTable;
 use \YLab\Users\Helper;
 
 /**
- * Формирование списка пользователей
- *
  * Class UsersListOrmComponent
+ * Формирование списка пользователей ORM
  *
  * @author Alexander Shatalov
  * @see https://github.com/avshatalov48/bitrix-webinar/
@@ -23,7 +23,10 @@ class UsersListOrmComponent extends \CBitrixComponent
     public function onPrepareComponentParams($arParams)
     {
         if (!Loader::includeModule("ylab.users")) {
-            echo "<pre>" . Loc::getMessage("YLAB_USERS_MODULE_EXISTS") . "</pre>";
+            echo "<pre>";
+            print_r(Loc::getMessage("YLAB_USERS_MODULE_EXISTS"));
+            echo "</pre>";
+            exit;
         }
         return parent::onPrepareComponentParams($arParams);
     }
@@ -50,7 +53,7 @@ class UsersListOrmComponent extends \CBitrixComponent
     {
         $arUsers = [];
         try {
-            $arUsers = UsersTable::getList([
+            $arUsers = YlabUsersTable::getList([
                 "select" => [
                     "ID",
                     "USER_NAME",

@@ -1,2 +1,2 @@
 <?php
-$MESS["YLAB_USERS_MODULE_EXISTS"] = 'Модуль "YLab Users" не подключен!<br>Выполните следующие действия: Администрирование > Marketplace > Установленные решения > Доступные решения > YLab Users (ylab.users) > Установить';
+$MESS["YLAB_USERS_MODULE_EXISTS"] = 'Модуль "YLab Users" не подключен!<br>Проверьте его подключение в панели администрирования сайта:<br><i>Администрирование > Marketplace > Установленные решения > Доступные решения > YLab Users (ylab.users) > Установить</i>';

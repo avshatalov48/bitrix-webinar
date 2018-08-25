@@ -8,7 +8,7 @@ use \YLab\Users\Helper;
 ?>
 
 <div class="container">
-    <? if (count($arResult["FIELDS"])): ?>
+    <? if ($arResult["FIELDS"]): ?>
         <h3>users.create.orm</h3>
         <form action="" method="post">
 
@@ -32,7 +32,7 @@ use \YLab\Users\Helper;
                     <label for="<?= $sKey ?>"><?= Helper::i18n($sKey) ?></label>
                     <input type="text" name="<?= $sKey ?>"
                            class="form-control" id="<?= $sKey ?>"
-                           placeholder="<?= $arResult["PLACEHOLDERS"][$sKey] ?>"
+                           placeholder="<?= Helper::i18n("PLACEHOLDER_" . $sKey) ?>"
                            value="<?= $arResult["REQUEST"][$sKey] ?>">
                 </div>
             <? endforeach; ?>
@@ -40,7 +40,7 @@ use \YLab\Users\Helper;
 
             <? //<Список городов> ?>
             <div class="form-group">
-                <label for="TOWN_LIST"><?= Helper::i18n("PLACEHOLDERS_TOWN_LIST") ?></label>
+                <label for="TOWN_LIST"><?= Helper::i18n("PLACEHOLDER_TOWN_LIST") ?></label>
                 <select class="form-control" id="TOWN_LIST" name="TOWN_LIST">
                     <option value="">
                         <?= Helper::i18n("SELECT_DEFAULT") ?>
@@ -57,12 +57,14 @@ use \YLab\Users\Helper;
             </div>
             <? //</Список городов> ?>
 
+            <? //<Кнопки> ?>
             <button type="submit" name="submit" class="btn btn-primary">
                 <?= Helper::i18n("BUTTON_SUBMIT") ?>
             </button>
-            <button type="reset" class="btn btn-secondary">
+            <button type="reset" class="btn btn-secondary" id="form__button-reset">
                 <?= Helper::i18n("BUTTON_RESET") ?>
             </button>
+            <? //</Кнопки> ?>
         </form>
     <? else: ?>
         <div class="alert alert-danger" role="alert">

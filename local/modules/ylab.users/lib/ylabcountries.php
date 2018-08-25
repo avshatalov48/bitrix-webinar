@@ -2,16 +2,16 @@
 
 namespace YLab\Users;
 
-use Bitrix\Main\Entity;
+use Bitrix\Main\Entity\DataManager;
 
 /**
- * Class TownsTable
+ * Class YlabCountriesTable
  * @package YLab\Users
  *
  * @author Alexander Shatalov
  * @see https://github.com/avshatalov48/bitrix-webinar/
  */
-class TownsTable extends Entity\DataManager
+class YlabCountriesTable extends DataManager
 {
     /**
      * @return string
@@ -26,12 +26,11 @@ class TownsTable extends Entity\DataManager
      */
     public static function getTableName()
     {
-        return "b_ylab_towns";
+        return "b_ylab_countries";
     }
 
     /**
      * @return array
-     * @throws \Bitrix\Main\ArgumentException
      */
     public static function getMap()
     {
@@ -44,16 +43,7 @@ class TownsTable extends Entity\DataManager
             "NAME" => [
                 "data_type" => "string",
                 "required" => true
-            ],
-            "COUNTRY_ID" => [
-                "data_type" => "integer",
-                "required" => true
-            ],
-            new Entity\ReferenceField(
-                "COUNTRY",
-                "YLab\Users\Countries",
-                ["=this.COUNTRY_ID" => "ref.ID"]
-            ),
+            ]
         ];
     }
 }

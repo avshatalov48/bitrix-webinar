@@ -3,11 +3,12 @@
 }
 
 use \YLab\Users\Helper;
+
 /** @var array $arResult */
 ?>
 
 <div class="container">
-    <? if (count($arResult)): ?>
+    <? if ($arResult): ?>
         <h3>users.list.orm</h3>
         <table class="table table-striped">
             <? foreach ($arResult as $iOrder => $arItem): ?>

@@ -2,7 +2,7 @@
 
 namespace YLab\Users;
 
-use Bitrix\Main\Entity\DataManager;
+use Bitrix\Main\Entity;
 
 /**
  * Class YlabCountriesTable
@@ -11,7 +11,7 @@ use Bitrix\Main\Entity\DataManager;
  * @author Alexander Shatalov
  * @see https://github.com/avshatalov48/bitrix-webinar/
  */
-class YlabCountriesTable extends DataManager
+class YlabCountriesTable extends Entity\DataManager
 {
     /**
      * @return string
@@ -30,20 +30,19 @@ class YlabCountriesTable extends DataManager
     }
 
     /**
-     * @return array
+     * @return array|Entity\public
+     * @throws \Exception
      */
     public static function getMap()
     {
         return [
-            "ID" => [
-                "data_type" => "integer",
+            new Entity\IntegerField("ID", [
                 "primary" => true,
                 "autocomplete" => true,
-            ],
-            "NAME" => [
-                "data_type" => "string",
-                "required" => true
-            ]
+            ]),
+            new Entity\StringField("NAME", [
+                "required" => true,
+            ]),
         ];
     }
 }

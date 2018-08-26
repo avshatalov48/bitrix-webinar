@@ -30,25 +30,22 @@ class YlabTownsTable extends Entity\DataManager
     }
 
     /**
-     * @return array
-     * @throws \Bitrix\Main\ArgumentException
+     * @return array|Entity\public
+     * @throws \Exception
      */
     public static function getMap()
     {
         return [
-            "ID" => [
-                "data_type" => "integer",
+            new Entity\IntegerField("ID", [
                 "primary" => true,
                 "autocomplete" => true,
-            ],
-            "NAME" => [
-                "data_type" => "string",
-                "required" => true
-            ],
-            "COUNTRY_ID" => [
-                "data_type" => "integer",
-                "required" => true
-            ],
+            ]),
+            new Entity\StringField("NAME", [
+                "required" => true,
+            ]),
+            new Entity\IntegerField("COUNTRY_ID", [
+                "required" => true,
+            ]),
             new Entity\ReferenceField(
                 "COUNTRY",
                 "YLab\Users\YlabCountries",

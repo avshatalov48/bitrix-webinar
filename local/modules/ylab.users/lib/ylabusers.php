@@ -30,38 +30,33 @@ class YlabUsersTable extends Entity\DataManager
     }
 
     /**
-     * @return array
-     * @throws \Bitrix\Main\ArgumentException
+     * @return array|Entity\public
+     * @throws \Exception
      */
     public static function getMap()
     {
         return [
-            "ID" => [
-                "data_type" => "integer",
+            new Entity\IntegerField("ID", [
                 "primary" => true,
                 "autocomplete" => true,
-            ],
-            "USER_NAME" => [
-                "data_type" => "string",
-                "required" => true
-            ],
-            "TOWN_ID" => [
-                "data_type" => "integer",
-                "required" => true
-            ],
+            ]),
+            new Entity\StringField("USER_NAME", [
+                "required" => true,
+            ]),
+            new Entity\IntegerField("TOWN_ID", [
+                "required" => true,
+            ]),
             new Entity\ReferenceField(
                 "TOWN",
                 "YLab\Users\YlabTowns",
                 ["=this.TOWN_ID" => "ref.ID"]
             ),
-            "DATE_BORN" => [
-                "data_type" => "date",
-                "required" => true
-            ],
-            "PHONE" => [
-                "data_type" => "string",
-                "required" => true
-            ],
+            new Entity\DateField("DATE_BORN", [
+                "required" => true,
+            ]),
+            new Entity\StringField("PHONE", [
+                "required" => true,
+            ]),
         ];
     }
 }

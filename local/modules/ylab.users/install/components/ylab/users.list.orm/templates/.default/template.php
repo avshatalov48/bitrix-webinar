@@ -2,23 +2,23 @@
     die();
 }
 
-use \Bitrix\Main\Localization\Loc;
+use \YLab\Users\Helper;
 
 /** @var array $arResult */
 ?>
 
 <div class="container">
-    <? if (count($arResult)): ?>
-        <h3>users.list.ib</h3>
+    <? if ($arResult): ?>
+        <h3>users.list.orm</h3>
         <table class="table table-striped">
             <? foreach ($arResult as $iOrder => $arItem): ?>
                 <? //<Шапка таблицы> ?>
                 <? if ($iOrder == 0): ?>
                     <thead>
                     <tr>
-                        <? foreach ($arItem["PROPERTIES"] as $arProperty): ?>
+                        <? foreach ($arItem as $sKey => $sValue): ?>
                             <th>
-                                <?= $arProperty["NAME"] ?>
+                                <?= Helper::i18n($sKey) ?>
                             </th>
                         <? endforeach; ?>
                     </tr>
@@ -29,9 +29,9 @@ use \Bitrix\Main\Localization\Loc;
 
                 <? //<Тело таблицы> ?>
                 <tr>
-                    <? foreach ($arItem["PROPERTIES"] as $arProperty): ?>
+                    <? foreach ($arItem as $sKey => $sValue): ?>
                         <td>
-                            <?= $arProperty["VALUE"] ?>
+                            <?= $sValue ?>
                         </td>
                     <? endforeach; ?>
                 </tr>
@@ -41,7 +41,7 @@ use \Bitrix\Main\Localization\Loc;
         </table>
     <? else: ?>
         <div class="alert alert-danger" role="alert">
-            <?= Loc::getMessage("ERROR_USER_LIST_IS_EMPTY") ?>
+            <?= Helper::i18n("ERROR_USER_LIST_IS_EMPTY") ?>
         </div>
     <? endif; ?>
 </div>

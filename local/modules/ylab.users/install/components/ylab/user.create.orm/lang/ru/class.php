@@ -1,0 +1,3 @@
+<?php
+$MESS["YLAB_USERS_MODULE_EXISTS"] = 'Модуль "YLab Users" не подключен!<br>Проверьте его подключение в панели администрирования сайта:<br><i>Администрирование > Marketplace > Установленные решения > Доступные решения > YLab Users (ylab.users) > Установить</i>';
+$MESS["YLAB_VALIDATION_MODULE_EXISTS"] = 'Модуль "YLab Validation" не подключен!<br>Проверьте его подключение в панели администрирования сайта:<br><i>Администрирование > Marketplace > Установленные решения > Доступные решения > YLab Validation (ylab.validation) > Установить</i>';

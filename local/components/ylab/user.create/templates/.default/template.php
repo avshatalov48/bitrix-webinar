@@ -1,34 +1,30 @@
 <? if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
     die();
 }
-/** @var array $arParams */
+
+use \Bitrix\Main\Localization\Loc;
+
 /** @var array $arResult */
-/** @global CMain $APPLICATION */
-/** @global CUser $USER */
-/** @global CDatabase $DB */
-/** @var CBitrixComponentTemplate $this */
-/** @var string $templateName */
-/** @var string $templateFile */
-/** @var string $templateFolder */
-/** @var string $componentPath */
-/** @var CBitrixComponent $component */
 ?>
 
-<div class="container" style="margin-top: 100px;">
-    <? if ($arResult["PROPERTIES"]): ?>
+<div class="container">
+    <? if (count($arResult["PROPERTIES"])): ?>
+        <h3>users.create.ib</h3>
         <form action="" method="post">
 
             <?= bitrix_sessid_post() ?>
 
+            <? //<Сообщения о статусе валидации> ?>
             <? if (count($arResult["ERRORS"])): ?>
                 <div class="alert alert-danger" role="alert">
                     <?= implode("<hr>", $arResult["ERRORS"]) ?>
                 </div>
-            <? elseif ($arResult["SUCCESS"]["MESSAGE"]): ?>
+            <? elseif ($arResult["SUCCESS"]): ?>
                 <div class="alert alert-success" role="alert">
-                    <?= $arResult["SUCCESS"]["MESSAGE"] ?>
+                    <?= Loc::getMessage("SUCCESS") ?>
                 </div>
             <? endif; ?>
+            <? //</Сообщения о статусе валидации> ?>
 
             <? foreach ($arResult["PROPERTIES"] as $arProperty): ?>
                 <div class="form-group">
@@ -45,7 +41,9 @@
                     <? if ($arProperty["PROPERTY_TYPE"] == "L"): ?>
                         <select class="form-control" id="<?= $arProperty["CODE"] ?>"
                                 name="<?= $arProperty["CODE"] ?>">
-                            <option value="">Выбрать</option>
+                            <option value="">
+                                <?= Loc::getMessage("SELECT_DEFAULT") ?>
+                            </option>
                             <? foreach ($arResult["TOWN_LIST"] as $arItem): ?>
                                 <option
                                     <? if ($arResult["REQUEST"]["TOWN_LIST"] == $arItem["XML_ID"]): ?>
@@ -60,12 +58,16 @@
                 </div>
             <? endforeach; ?>
 
-            <button type="submit" name="submit" class="btn btn-primary">Добавить пользователя</button>
-            <button type="reset" class="btn btn-secondary">Сброс</button>
+            <button type="submit" name="submit" class="btn btn-primary">
+                <?= Loc::getMessage("BUTTON_SUBMIT") ?>
+            </button>
+            <button type="reset" class="btn btn-secondary">
+                <?= Loc::getMessage("BUTTON_RESET") ?>
+            </button>
         </form>
     <? else: ?>
         <div class="alert alert-danger" role="alert">
-            Проверьте существование инфоблока "Пользователи". Выполните миграции.
+            <?= Loc::getMessage("ERROR_IB_NOT_EXIST") ?>
         </div>
     <? endif; ?>
 </div>

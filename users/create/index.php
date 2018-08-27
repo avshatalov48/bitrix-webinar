@@ -6,9 +6,9 @@
 global $APPLICATION;
 
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
-$APPLICATION->SetTitle("Вывод списка пользователей");
+$APPLICATION->SetTitle("Добавление пользователей");
 ?>
 
-<? $APPLICATION->IncludeComponent("ylab:users.list", "", ["CODE" => "users", "ACTIVE" => "Y"]); ?>
+<? $APPLICATION->IncludeComponent("ylab:user.create", "", []); ?>
 
 <? require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php"); ?>

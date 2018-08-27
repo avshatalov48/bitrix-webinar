@@ -54,16 +54,29 @@ class UsersListComponent extends \CBitrixComponent
         $this->arParams["IBLOCK_ID"] = $this->getIblockIdByCode($this->arParams["CODE"]);
 
         /**
-         * Получение массива активных пользователей
+         * Получение данных пользователей
          */
-        try {
-            $arUsers = ElementTable::getList(array(
-                "select" => array("ID", "NAME"),
-                "filter" => array("IBLOCK_ID" => $this->arParams["IBLOCK_ID"], "ACTIVE" => $this->arParams["ACTIVE"]),
-                "order" => array("ID" => "ASC")
-            ))->fetchAll();
-        } catch (\Exception $e) {
-            echo $e->getMessage();
+        $arSelect = [
+            "ID",
+            "IBLOCK_ID",
+            "NAME",
+            "PROPERTY_*"
+        ];
+        $arFilter = [
+            "IBLOCK_ID" => $this->arParams["IBLOCK_ID"],
+            "ACTIVE" => $this->arParams["ACTIVE"]
+        ];
+        $arSort = [
+            "SORT" => "ASC"
+        ];
+        $res = CIBlockElement::GetList($arSort, $arFilter, false, false, $arSelect);
+
+        $iOrder = 0;
+        while ($ob = $res->GetNextElement()) {
+            $arFields = $ob->GetFields();
+            $arUsers[$iOrder] = $arFields;
+            $arProperties = $ob->GetProperties();
+            $arUsers[$iOrder++]["PROPERTIES"] = $arProperties;
         }
 
         return $arUsers;

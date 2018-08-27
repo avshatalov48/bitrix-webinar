@@ -94,7 +94,7 @@ class Init extends AbstractMigration
         try {
             Loader::includeModule("iblock");
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            print_r($this->translit($e->getMessage()));
         }
 
         /**
@@ -111,8 +111,8 @@ class Init extends AbstractMigration
              * Создание типа ИБ
              */
             $obIBlockType = new CIBlockType;
-            if(!$obIBlockType->Add($this->arTypeIblock)){
-                echo $obIBlockType->LAST_ERROR;
+            if (!$obIBlockType->Add($this->arTypeIblock)) {
+                print_r($this->translit($obIBlockType->LAST_ERROR));
                 return;
             }
         }
@@ -127,7 +127,7 @@ class Init extends AbstractMigration
                 ],
             ]);
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            print_r($this->translit($e->getMessage()));
         }
 
         if (!$arIblocks->fetch()) {
@@ -198,15 +198,54 @@ class Init extends AbstractMigration
         ])->getId();
 
         /**
-         * Наполнение вариантами значений "Список городов"
+         * Наполнение вариантами значений "Список городов", получение их ID
          */
+        $arTownProperties = [];
         foreach ($this->arTownProperty["VALUES"] as $iTownPropertyKey => $sTownPropertyValue) {
-            PropertyEnumerationTable::add([
+            $arTownProperties[] = PropertyEnumerationTable::add([
                 "PROPERTY_ID" => $iTownPropertyId,
                 "VALUE" => $sTownPropertyValue,
                 "XML_ID" => $iTownPropertyKey,
-            ]);
+            ])->getId();
         }
+
+        /*
+         * Наполнение тестовыми данными
+         */
+        $this->addUser("Вася", "01.01.1981", "+79210000001", $arTownProperties[0]);
+        $this->addUser("Петя", "02.02.1982", "+79210000002", $arTownProperties[1]);
+        $this->addUser("Кирюша", "03.03.1983", "+79210000003", $arTownProperties[2]);
+    }
+
+    /*
+     * Добавление нового пользователя в ИБ
+     *
+     * @access public
+     * @param string $sUserName Имя пользователя
+     * @param string $sDateBorn Дата рождения
+     * @param string $sPhone Телефон
+     * @param integer $iTownList Город
+     */
+    public function addUser($sUserName, $sDateBorn, $sPhone, $iTownList)
+    {
+        $oCIBlockElement = new \CIBlockElement;
+
+        $sName = "{$sUserName}|{$sDateBorn}|{$sPhone}";
+
+        $arFields = [
+            "IBLOCK_ID" => $this->arIblock["ID"],
+            "NAME" => $sName,
+            "PROPERTY_VALUES" => [
+                "USER_NAME" => $sUserName,
+                "DATE_BORN" => $sDateBorn,
+                "PHONE" => $sPhone,
+                "TOWN_LIST" => $iTownList,
+            ],
+        ];
+
+        if (!$oCIBlockElement->Add($arFields)) {
+            print_r($this->translit($oCIBlockElement->LAST_ERROR));
+        };
     }
 
     /**
@@ -222,7 +261,7 @@ class Init extends AbstractMigration
         try {
             Loader::includeModule("iblock");
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            print_r($this->translit($e->getMessage()));
         }
 
         /**
@@ -235,7 +274,7 @@ class Init extends AbstractMigration
                 ],
             ]);
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            print_r($this->translit($e->getMessage()));
         }
 
         while ($arItem = $arIblocks->fetch()) {
@@ -246,5 +285,57 @@ class Init extends AbstractMigration
          * Удаление типа ИБ
          */
         CIBlockType::Delete($this->arTypeIblock["ID"]);
+    }
+
+    /*
+     * Транслитерация
+     *
+     * @access public
+     * @param string $sString Текст
+     * @return string
+     */
+    public function translit($sString)
+    {
+        $arReplace = [
+            "'" => "",
+            "`" => "",
+            "а" => "a", "А" => "A",
+            "б" => "b", "Б" => "B",
+            "в" => "v", "В" => "V",
+            "г" => "g", "Г" => "G",
+            "д" => "d", "Д" => "D",
+            "е" => "e", "Е" => "E",
+            "ё" => "e", "Ё" => "E",
+            "ж" => "zh", "Ж" => "ZH",
+            "з" => "z", "З" => "Z",
+            "и" => "i", "И" => "I",
+            "й" => "y", "Й" => "Y",
+            "к" => "k", "К" => "K",
+            "л" => "l", "Л" => "L",
+            "м" => "m", "М" => "M",
+            "н" => "n", "Н" => "N",
+            "о" => "o", "О" => "O",
+            "п" => "p", "П" => "P",
+            "р" => "r", "Р" => "R",
+            "с" => "s", "С" => "S",
+            "т" => "t", "Т" => "T",
+            "у" => "u", "У" => "U",
+            "ф" => "f", "Ф" => "F",
+            "х" => "h", "Х" => "H",
+            "ц" => "c", "Ц" => "C",
+            "ч" => "ch", "Ч" => "CH",
+            "ш" => "sh", "Ш" => "SH",
+            "щ" => "sch", "Щ" => "SCH",
+            "ъ" => "", "Ъ" => "",
+            "ы" => "y", "Ы" => "Y",
+            "ь" => "", "Ь" => "",
+            "э" => "e", "Э" => "E",
+            "ю" => "yu", "Ю" => "YU",
+            "я" => "ya", "Я" => "YA",
+            "і" => "i", "І" => "I",
+            "ї" => "yi", "Ї" => "YI",
+            "є" => "e", "Є" => "E"
+        ];
+        return iconv("UTF-8", "UTF-8//IGNORE", strtr($sString, $arReplace));
     }
 }
